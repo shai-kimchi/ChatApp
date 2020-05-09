@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html style="background: linear-gradient(to left, #ff512f, #dd2476);" id="H">
+<title>ChatApp</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+<style>
+html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
+body,h1 {font-family: "Raleway", sans-serif,style="background: linear-gradient(to left, #ff512f, #dd2476);"}
+body, html {height: 100%}
+.bgimg {
+  background: linear-gradient(to left, #ff512f, #dd2476);
+  min-height: 100%;
+  background-position: center;
+  background-size: cover;
+}
+</style>
+<body id="B" class="w3-theme-l5">
+  <div id="demoLogin" class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+
+    <div class="w3-display-middle">
+    <h2 class="w3-xxxlarge w3-animate-top" style="text-align: center;color:rgba(33, 150, 243, 1)"><span style="color:rgba(76, 175, 80, 1);"><b>Chat</b></span><span style="color:blue;"><b>App</b></span><i class="far fa-comments" style="color:rgba(76, 175, 80, 1);"></i></h2>
+
+  </div>
+<div>
+    <br>
+
+
+    <div class="w3-row-padding">
+      <div class="w3-col m12">
+        <div class="w3-card w3-round w3-white">
+          <div class="w3-container w3-padding">
+
+            <div style="float: right;width:100%" class="form-inline"  >
+              <button style="width:20%;" class="btn btn-outline-success my-2 my-sm-0" onclick="myFunction()" >Enter</button>
+              <input style="width:80%;" id="loginUser" class="form-control" type="text" placeholder="Enter user Name" aria-label="Search">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- card.// -->
+
+    </div>
+
+  </div>
+<!-- Navbar -->
+<div  id="demo">
+<div class="w3-top">
+    <nav style="background-color: #e3f2fd;"class="navbar navbar-light  justify-content-between">
+        <div style="width:100%">
+        <form style="float: right;width:100%" class="form-inline" method="POST" action="" >
+          <button style="width:20%;" class="btn btn-outline-success my-2 my-sm-0"  type="submit">Send</button>
+          <input style="width:80%;" class="message form-control" type="text" placeholder="Massage" aria-label="Search">
+        </form>
+      </div>
+      </nav>
+   </div>
+
+
+
+
+<!-- Page Container -->
+<div class="w3-container w3-content" style="max-width:1400px;">
+
+    <div >
+
+      <div class="message_holder" ></div>
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
+<!-- Footer -->
+</div>
+<!--  -->
+<script type="text/javascript">
+document.getElementById("demo").style.visibility = "hidden";
+      var nickname =""
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+      var id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+    });
+    function myFunction() {
+       nickname =document.getElementById("loginUser").value ;
+       if(nickname== undefined ||nickname=="" ||nickname==null ){
+        alert("Enter user name!")
+       }
+       else{
+      document.getElementById("demo").style.visibility = "visible";
+      document.getElementById("demoLogin").style.visibility = "hidden";
+      document.getElementById("H").style.height = "1%";
+      document.getElementById("B").style.height = "1%";
+      var dn = new Date();
+      socket.emit( 'my event', {
+          nicknameConnect: nickname,
+          time :  dn.getHours() +":"+(dn.getMinutes() < 10 ? '0' : '') + dn.getMinutes()
+        } )
+       }
+}
+
+      socket.on( 'connect', function() {
+        socket.emit( 'my event', {
+          data: 'User Connected'
+        } )
+        var form = $( 'form' ).on( 'submit', function( e ) {
+          e.preventDefault()
+          var d = new Date();
+          let user_input = $( 'input.message' ).val()
+          socket.emit( 'my event', {
+            user_name : nickname,
+            message : user_input,
+            ID : id,
+            time : d.getHours() +":"+(d.getMinutes() < 10 ? '0' : '') + d.getMinutes()
+          } )
+          $( 'input.message' ).val( '' ).focus()
+        } )
+      } )
+      socket.on( 'my response', function( msg ) {
+        console.log( msg )
+        if( typeof msg.nicknameConnect !== 'undefined' ) {
+          $( 'div.message_holder' ).append( '<div class="w3-container w3-card w3-orange w3-round w3-margin" style="text-align: center; padding-bottom: 2%;"><br><span class="w3-right w3-opacity">'+msg.time+'</span><label><h4>'+msg.nicknameConnect+' joined the chat!</h4></label></div>' )
+        $('html, body').animate({scrollTop:$(document).height()}, 'slow');
+        }
+        else if( typeof msg.user_name !== 'undefined' ) {
+          if( msg.ID == id ) {
+          $( 'h3' ).remove()
+          $( 'div.message_holder' ).append( '<div class="w3-container w3-card w3-blue w3-round w3-margin"><br><img src="https://ptetutorials.com/images/user-profile.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:10%"><span class="w3-right w3-opacity">'+msg.time+'</span><label>'+msg.user_name+'</label><hr class="w3-clear"><p>'+msg.message+'</p></div>' )
+          }
+          else{
+            $( 'h3' ).remove()
+          $( 'div.message_holder' ).append( '<div class="w3-container w3-card w3-green w3-round w3-margin"><br><img src="https://ptetutorials.com/images/user-profile.png" alt="Avatar" class="w3-right w3-circle w3-margin-left" style="width:10%"><span class="w3-left w3-opacity">'+msg.time+'</span><label class="w3-right ">'+msg.user_name+'</label> <br><hr class="w3-clear"><p>'+msg.message+'</p></div>' )
+
+
+
+          }
+           $('html, body').animate({scrollTop:$(document).height()}, 'slow');
+        }
+
+      })
+    </script>
+</body>
+</html>
